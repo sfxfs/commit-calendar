@@ -69,9 +69,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     localStorage.setItem('code_verifier', codeVerifier)
 
-    // Build redirect URI - include pathname for subdirectory deployment
-    const path = window.location.pathname.replace(/\/[^/]*$/, '') // Remove current page from path
-    const redirectUri = `${window.location.origin}${path}/callback`
+    // Build redirect URI using BASE_URL from Vite config
+    const basePath = import.meta.env.BASE_URL || '/'
+    const redirectUri = `${window.location.origin}${basePath}callback`
 
     const params = new URLSearchParams({
       client_id: GITHUB_CLIENT_ID,
