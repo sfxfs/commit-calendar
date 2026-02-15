@@ -1,26 +1,20 @@
-import { useEffect } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import axios from 'axios'
-import { useAuth } from '../auth/AuthContext'
 
 const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID || 'Iv1.8e55d7dd8f6a9fff'
 
 export default function OAuthCallback() {
   const [searchParams] = useSearchParams()
-  const navigate = useNavigate()
-  const { login: setAuth } = useAuth()
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const code = searchParams.get('code')
     const codeVerifier = localStorage.getItem('code_verifier')
 
     if (code && codeVerifier && !localStorage.getItem('github_token')) {
-      // Use a simple proxy approach - exchange code for token
-      // Note: In production, use your own backend
       const exchangeCode = async () => {
         try {
-          // Create a minimal POST body - this won't actually work without a client_secret
-          // but we'll handle the error and use a different flow
           const response = await axios.post(
             'https://github.com/login/oauth/access_token',
             {
@@ -47,18 +41,40 @@ export default function OAuthCallback() {
             })
 
             localStorage.setItem('github_user', JSON.stringify(userResponse.data))
-            window.location.href = '/'
+
+            // Clear code verifier
+            localStorage.removeItem('code_verifier')
+
+            // Redirect to home with HashRouter
+            window.location.href = '/#/'
+          } else {
+            setError('No access token received')
           }
-        } catch (error: unknown) {
-          console.error('OAuth error:', error)
-          // For demo purposes, let's use device flow or prompt for token
-          navigate('/login')
+        } catch (err: unknown) {
+          console.error('OAuth error:', err)
+          setError(err instanceof Error ? err.message : 'OAuth failed')
         }
       }
 
       exchangeCode()
     }
-  }, [searchParams, navigate, setAuth])
+  }, [searchParams])
 
-  return null
+  if (error) {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center' }}>
+        <h2>OAuth Error</h2>
+        <p style={{ color: '#f85149' }}>{error}</p>
+        <a href="/#/login" style={{ marginTop: '1rem', display: 'inline-block' }}>
+          Back to Login
+        </a>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ padding: '2rem', textAlign: 'center' }}>
+      <p>Completing authentication...</p>
+    </div>
+  )
 }
