@@ -24,9 +24,9 @@ npm run preview  # Preview production build
 - Axios for HTTP requests
 
 ### Deployment
-- Uses GitHub Actions for automatic deployment to GitHub Pages
-- Base path: `/commit-calendar/`
-- OAuth callback uses HashRouter: `/#/callback`
+- Uses GitHub Actions (`peaceiris/actions-gh-pages`) for automatic deployment
+- Deploys to `gh-pages` branch
+- Base path: relative (`./`)
 
 ### Authentication Flow
 - Uses GitHub OAuth with PKCE (Proof Key for Code Exchange)
@@ -56,5 +56,5 @@ npm run preview  # Preview production build
 Defined in `PatternDesigner.tsx`: `heart`, `1`, `0`, `smiley`, `star` - each is an 8x8 binary matrix
 
 ### Environment Variables
-- `VITE_GITHUB_CLIENT_ID`: GitHub OAuth App Client ID
-- `VITE_BASE_URL`: Base path for Vite (default: `/commit-calendar/`)
+- `VITE_GITHUB_CLIENT_ID`: GitHub OAuth App Client ID (set in GitHub Actions secrets)
+- Vite base path: `./` (relative, works with any subdirectory)
