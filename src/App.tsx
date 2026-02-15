@@ -20,40 +20,39 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
-// Wrapper component to handle OAuth callback at root level
-function AppContent() {
+// Wrapper to check for OAuth code
+function OAuthWrapper() {
   const [searchParams] = useSearchParams()
   const code = searchParams.get('code')
 
-  // If we have a code parameter, show the OAuth callback component
   if (code) {
     return <OAuthCallback />
   }
 
   return (
-    <HashRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<Dashboard />} />
-          <Route path="generate" element={<PatternDesigner />} />
-        </Route>
-      </Routes>
-    </HashRouter>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Dashboard />} />
+        <Route path="generate" element={<PatternDesigner />} />
+      </Route>
+    </Routes>
   )
 }
 
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <HashRouter>
+        <OAuthWrapper />
+      </HashRouter>
     </AuthProvider>
   )
 }

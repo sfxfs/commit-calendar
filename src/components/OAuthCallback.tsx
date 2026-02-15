@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 
 const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID || 'Iv1.8e55d7dd8f6a9fff'
 
 export default function OAuthCallback() {
-  const [searchParams] = useSearchParams()
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const code = searchParams.get('code')
+    // Get code from URL search params
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get('code')
     const codeVerifier = localStorage.getItem('code_verifier')
 
     if (code && codeVerifier && !localStorage.getItem('github_token')) {
@@ -58,7 +58,7 @@ export default function OAuthCallback() {
 
       exchangeCode()
     }
-  }, [searchParams])
+  }, [])
 
   if (error) {
     return (
