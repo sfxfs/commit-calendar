@@ -69,9 +69,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     localStorage.setItem('code_verifier', codeVerifier)
 
-    // Build redirect URI - use origin + base path + /callback
-    const basePath = import.meta.env.BASE_URL || '/'
-    const redirectUri = `${window.location.origin}${basePath}callback`
+    // Build redirect URI - use origin + /callback
+    const redirectUri = `${window.location.origin}/callback`
 
     const params = new URLSearchParams({
       client_id: GITHUB_CLIENT_ID,
